@@ -6,13 +6,31 @@ English | [日本語](README.md)
 
 A compact Windows app with stick figures that move in response to Codex activity. The main agent appears as the manager, and observed subagents appear as team members. Continue giving instructions and handling approvals in Codex itself.
 
-![Onecarat Agent Office CX showing a manager delegating work to two team members](assets/screenshots/office-delegation.png)
+![Onecarat Agent Office CX showing a manager delegating work to two team members](assets/screenshots/office-delegation-en.png)
 
-*Screenshot of the actual app displaying synthetic test data for a delegation scene. This is not a record of activity from a real session. The screenshot shows the Japanese interface; the app also supports English.*
+*English UI captured in a visual test using the app's window component and synthetic delegation data. This is not a record of real session activity. The window can be resized.*
 
 - **Already installed?** → [Everyday use](#everyday-use)
 - **First time here, or just downloaded the repository?** → [Initial setup](#initial-setup)
 - **No window or no movement?** → [Troubleshooting](#troubleshooting)
+
+## Initial setup
+
+You need Windows 10/11, .NET Framework 4.8, Node.js 24 or later, and Codex configured to save session logs on the same PC.
+
+**This repository contains source code. Downloading it from GitHub does not provide a ready-to-run EXE.** Build the app and install a protected copy for your normal Windows account. If it is already installed, skip this section.
+
+1. Obtain the source. Access to a private repository requires an authorized GitHub account.
+
+   ```powershell
+   git clone https://github.com/onecarat-labs/onecarat-agent-office-cx.git C:\work\onecarat-agent-office-cx
+   ```
+
+   If you already have the source, do not clone it again.
+2. Follow the [setup guide](docs/SETUP.en.md) to build, review, and manually install the app.
+3. Use the instructions below to open a window for the session you want to watch.
+
+The Claude Code edition's plugin installation commands do not apply to CX. CX currently has no automatic installer or updater.
 
 ## Everyday use
 
@@ -74,40 +92,6 @@ Seven seconds after a team member's turn is observed to end, its character is co
 
 **Approval waits cannot always be displayed reliably.** In the investigated Codex version, 0.169.0, approval requests were not persisted in session logs. Check Codex itself rather than relying solely on Office for approval notifications. Ordinary activity becomes unknown after 15 seconds without updates. An observed approval request is not cleared solely because time has passed.
 
-## Initial setup
-
-You need Windows 10/11, .NET Framework 4.8, Node.js 24 or later, and Codex configured to save session logs on the same PC.
-
-**This repository contains source code. Downloading it from GitHub does not provide a ready-to-run EXE.** Build the app and install a protected copy for your normal Windows account. If it is already installed, skip this section.
-
-### 1. Build and prepare the installation package
-
-This example assumes the source is at `C:\work\onecarat-agent-office-cx`. Change the first path if needed. Run each command separately and stop if any command fails. No additional npm packages need to be installed.
-
-```powershell
-Set-Location C:\work\onecarat-agent-office-cx
-npm.cmd run build
-node scripts/package-office.mjs
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-office.ps1 -ValidateOnly
-```
-
-The message `Package contents and hashes verified` confirms the package file and hash checks. This is not a software signature or a guarantee of overall safety.
-
-### 2. Review and install the protected copy
-
-Review the [security response and manual installation instructions (Japanese)](docs/SECURITY_RESPONSE_2026_11_22.md#レビューと手動配置), the script, and the package contents. Then **run the following yourself in regular PowerShell**:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-office.ps1 -ReviewedPackage
-icacls "$env:LOCALAPPDATA\Programs\OnecaratCX" /T
-```
-
-The installer expects Node.js at `C:\Program Files\nodejs\node.exe` by default. If it is installed elsewhere, append `-NodeExe 'ABSOLUTE-PATH-TO-TRUSTED-node.exe'` to the installation command.
-
-The destination is `%LOCALAPPDATA%\Programs\OnecaratCX`. Check for `Installed reviewed copy with private ACL` and confirm that access permissions allow only your account, SYSTEM, and Administrators. Installation does not automatically launch Office or Codex. Once complete, proceed to [Everyday use](#everyday-use).
-
-**If the destination already exists, installation stops without overwriting it.** There is no automatic updater. Review changes and the installation procedure separately when updating. Do not use the development-folder EXE as a substitute for the protected installation or loosen its access permissions.
-
 ## Troubleshooting
 
 | Symptom | What to check |
@@ -126,6 +110,13 @@ The destination is `%LOCALAPPDATA%\Programs\OnecaratCX`. Check for `Installed re
 Node.js reads local Codex JSONL logs and passes activity categories to a Windows Forms window. Conversation text, file contents, and command text are not passed to the UI. Observation results are not saved. The product has no external network communication, prompt submission, or Codex execution controls.
 
 Changes to the log format, environments with log saving disabled, and sessions on another PC are not covered. See the [technical specification (Japanese)](docs/TECHNICAL_SPECIFICATION.md) for details.
+
+## Updating and uninstalling
+
+- **Update**: build and review a new package, close the windows, keep the old installation as a backup, and perform a fresh installation. The installer will not overwrite an existing destination.
+- **Uninstall**: close all Office windows and manually delete the installed `OnecaratCX` folder. You do not need to delete Codex or its session logs.
+
+See [setup, updates, and removal](docs/SETUP.en.md) for detailed steps and how to restore the previous version if an update fails.
 
 ## For developers
 

@@ -14,6 +14,24 @@ Codexの活動に合わせて棒人間が動く、Windows用の小窓アプリ�
 - **初めて使う・GitHubから取得したばかり** → [初回セットアップ](#初回セットアップ)
 - **小窓が出ない・動かない** → [困ったとき](#困ったとき)
 
+## 初回セットアップ
+
+必要な環境はWindows 10/11、.NET Framework 4.8、Node.js 24以上、および同じPCにセッションログを保存するCodexです。
+
+**このリポジトリはソースコードです。GitHubから取得しただけでは起動用EXEはありません。** ビルドして、普段使うWindowsユーザー専用の場所へ配置します。すでに配置済みなら、この節を繰り返す必要はありません。
+
+1. ソースを取得します。Privateの場合はアクセス権のあるGitHubアカウントが必要です。
+
+   ```powershell
+   git clone https://github.com/onecarat-labs/onecarat-agent-office-cx.git C:\work\onecarat-agent-office-cx
+   ```
+
+   すでにソースがある場合は、再度cloneする必要はありません。
+2. [セットアップ手順](docs/SETUP.ja.md)に沿ってビルド・確認・手動インストールを行います。
+3. 下の「普段の起動方法」で、見たいセッションの小窓を開きます。
+
+Claude Code版のプラグイン導入コマンドはCXには使えません。CXには、現在、自動インストール・自動更新の機能はありません。
+
 ## 普段の起動方法
 
 ### 1. 見たいCodexセッションを開く
@@ -74,40 +92,6 @@ $officeThread = 'ここに確認済みのThread-IDを貼る'
 
 **承認待ちは確実に表示できるとは限りません。** 調査したCodex 0.169.0では承認要求が保存ログに残らないため、Officeだけを承認通知として使わず、Codex本体も確認してください。通常の活動は15秒更新がないと現在状態不明になります。観測済みの承認要求は、時間経過だけで解除しません。
 
-## 初回セットアップ
-
-必要な環境はWindows 10/11、.NET Framework 4.8、Node.js 24以上、および同じPCにセッションログを保存するCodexです。
-
-**このリポジトリはソースコードです。GitHubから取得しただけでは起動用EXEはありません。** ビルドして、普段使うWindowsユーザー専用の場所へ配置します。すでに配置済みなら、この節を繰り返す必要はありません。
-
-### 1. ビルドと配置候補の作成
-
-ソースを `C:\work\onecarat-agent-office-cx` に置いた例です。別の場所なら最初のパスを変更してください。以下は1行ずつ実行し、エラーになったら以後の操作を止めてください。追加のnpmパッケージのインストールは不要です。
-
-```powershell
-Set-Location C:\work\onecarat-agent-office-cx
-npm.cmd run build
-node scripts/package-office.mjs
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-office.ps1 -ValidateOnly
-```
-
-最後に `Package contents and hashes verified` が表示されれば、配置候補のファイルとハッシュの確認は完了です。これはソフトウェアの署名や安全性全般の保証ではありません。
-
-### 2. 内容を確認し、保護された場所に配置
-
-[セキュリティ対応・手動配置手順](docs/SECURITY_RESPONSE_2026_11_22.md#レビューと手動配置)とスクリプト・配置候補の内容を確認してから、**通常のPowerShellで本人が**実行します。
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-office.ps1 -ReviewedPackage
-icacls "$env:LOCALAPPDATA\Programs\OnecaratCX" /T
-```
-
-Node.jsの既定の参照先は `C:\Program Files\nodejs\node.exe` です。別の場所にインストールした場合は、インストールコマンドに `-NodeExe '信頼できるnode.exeの絶対パス'` を追加します。
-
-配置先は `%LOCALAPPDATA%\Programs\OnecaratCX` です。`Installed reviewed copy with private ACL` が表示され、アクセス許可が本人・SYSTEM・Administratorsだけであることを確認してください。インストール処理はOfficeやCodexを自動起動しません。完了後は[普段の起動方法](#普段の起動方法)へ進みます。
-
-**配置先がすでに存在する場合は上書きせず停止します。** 自動更新機能はありません。更新時は変更内容と配置手順を別途確認してください。開発フォルダのEXEを通常利用の代替として起動したり、保護先のアクセス権を緩めたりしないでください。
-
 ## 困ったとき
 
 | 症状 | 確認すること |
@@ -126,6 +110,13 @@ Node.jsの既定の参照先は `C:\Program Files\nodejs\node.exe` です。別�
 Node.jsがローカルのCodex JSONLログを読み、活動の種類だけをWindows Formsの小窓へ渡します。会話本文・ファイル内容・コマンド本文をUIへ渡さず、観測結果を保存しません。製品に外部通信やCodexへの入力・実行制御機能はありません。
 
 ログ形式の変更、ログ保存が無効な環境、別PCのセッションは保証対象外です。詳細は[技術仕様](docs/TECHNICAL_SPECIFICATION.md)を参照してください。
+
+## 更新・アンインストール
+
+- **更新**：新しい配置候補をビルド・確認し、小窓を閉じて旧インストールを退避した後、新規インストールします。既存の配置先には上書きしません。
+- **削除**：小窓をすべて閉じ、利用者がインストール先の `OnecaratCX` フォルダを削除します。Codex本体やセッションログを削除する必要はありません。
+
+具体的な手順と更新失敗時の戻し方は、[セットアップ・更新・削除](docs/SETUP.ja.md)を参照してください。
 
 ## 開発者向け
 
