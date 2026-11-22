@@ -1,0 +1,4 @@
+# CLI-generated isolated state is not a report artifact.
+inspection-home/
+runs/*/server-home/
+runs/*/tui-home/

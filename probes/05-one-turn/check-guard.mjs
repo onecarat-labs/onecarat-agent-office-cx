@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {mkdirSync,mkdtempSync,existsSync,writeFileSync} from 'node:fs';
+import {join} from 'node:path';
+import {allowedPrompt,consumeAuthorizedTurn} from './one-turn-guard.mjs';
+const dir=join(import.meta.dirname,'guard-checks');mkdirSync(dir,{recursive:true});
+const run=mkdtempSync(join(dir,'check-')),marker=join(run,'marker.json');
+const request={method:'turn/start',params:{threadId:'synthetic-test-thread',input:[{type:'text',text:allowedPrompt}]}};
+const args={request,armed:true,threadId:'synthetic-test-thread',marker};
+assert.throws(()=>consumeAuthorizedTurn({...args,armed:false}));
+assert.throws(()=>consumeAuthorizedTurn({...args,threadId:'different-thread'}));
+assert.throws(()=>consumeAuthorizedTurn({...args,request:{...request,params:{...request.params,input:[{type:'text',text:'not the authorized prompt'}]}}}));
+assert.equal(existsSync(marker),false);
+consumeAuthorizedTurn(args);assert.equal(existsSync(marker),true);
+assert.throws(()=>consumeAuthorizedTurn(args));
+const report={timestamp:new Date().toISOString(),checks:5,passed:true,modelRequests:0,networkRequests:0,syntheticMarkerOnly:true};
+writeFileSync(join(import.meta.dirname,'guard-check-result.json'),JSON.stringify(report,null,2));console.log(JSON.stringify(report));

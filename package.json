@@ -1,0 +1,15 @@
+{
+  "name": "onecarat-agent-office-cx",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "start": "node scripts/launch-office.mjs",
+    "build": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-v11.ps1",
+    "test": "node --test tests/*.test.mjs",
+    "check": "node scripts/check.mjs",
+    "test:observer": "node --test tests/observer.test.mjs",
+    "test:desktop": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/test-v11.ps1"
+  }
+}

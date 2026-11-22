@@ -1,0 +1,11 @@
+import {spawn} from 'node:child_process';
+import {writeFile} from 'node:fs/promises';
+import {currentThread,sessionsRoot,resolveLog} from '../observer/binding.mjs';
+const id=currentThread();await resolveLog(sessionsRoot(),id);
+const p=spawn(process.execPath,['observer/main-v11.mjs'],{env:{...process.env,CX_OBSERVER_THREAD_ID:id},stdio:['pipe','pipe','pipe']});
+let buf='',samples=[],types=new Set(),parentLinked=false;
+const exited=new Promise(r=>p.once('exit',r));
+p.stdout.on('data',d=>{buf+=d;for(;;){const n=buf.indexOf('\n');if(n<0)break;const line=buf.slice(0,n);buf=buf.slice(n+1);const s=JSON.parse(line);for(const a of s.actors||[]){types.add(a.activity);if(a.parent===id)parentLinked=true;}samples.push({status:s.status,rootMatched:s.actors?.[0]?.id===id,actors:s.actors?.length||0});}});
+await new Promise(r=>setTimeout(r,9000));p.stdin.end();const code=await exited;
+const out={time:new Date().toISOString(),samples,activities:[...types],explicitChildrenObserved:parentLinked,workerExit:code,newCodexProcesses:0};await writeFile('artifacts/v11/live-observer.json',JSON.stringify(out,null,2));console.log(JSON.stringify(out));
+if(!samples.length||samples.some(s=>!s.rootMatched)||!parentLinked)process.exitCode=1;

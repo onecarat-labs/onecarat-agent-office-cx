@@ -1,0 +1,14 @@
+import {readFile,writeFile} from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const dir='artifacts/visual-review/final/';
+const get=async name=>JSON.parse((await readFile(dir+name+'.json','utf8')).replace(/^\uFEFF/,''));
+const done=await get('done'),active=await get('delegating'),approval=await get('approval'),overflow=await get('overflow'),live=await get('live'),product=await get('product-exe');
+assert.equal(done.folded,6);assert.equal(done.visible.length,1);assert.match(done.summary,/部下の最終記録/);
+assert.equal(active.folded,4);assert.equal(active.visible.length,3);assert.ok(active.visible.includes('child-0')&&active.visible.includes('child-1'));
+assert.ok(approval.visible.includes('child-5'));assert.equal(approval.folded,3);assert.ok(approval.banner.length>0);
+assert.match(overflow.summary,/表示外の部下 3/);
+assert.equal((await get('english')).language,'en');
+assert.equal(live.status,'watching');assert.ok(live.samples>1);assert.equal(live.thread,process.env.CODEX_THREAD_ID);
+assert.equal(product.captured,true);assert.equal(product.windowCount,1);
+await writeFile('artifacts/visual-review/checks.json',JSON.stringify({endedTurnsCollapsed:true,newChildrenVisible:true,unresolvedApprovalVisible:true,overflowExplained:true,english:true,liveRootVerified:true,productExeCaptured:true},null,2));
+console.log('Visual review metadata checks passed. PNG appearance is reviewed separately.');
