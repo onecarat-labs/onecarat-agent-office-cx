@@ -1,6 +1,7 @@
 {
   "name": "onecarat-agent-office-cx",
   "version": "1.1.0",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "engines": { "node": ">=24" },
