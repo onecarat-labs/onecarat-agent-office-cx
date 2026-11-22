@@ -20,7 +20,7 @@ You need Windows 10/11, .NET Framework 4.8, Node.js 24 or later, and Codex confi
 
 **This repository contains source code. Downloading it from GitHub does not provide a ready-to-run EXE.** Build the app and install a protected copy for your normal Windows account. If it is already installed, skip this section.
 
-1. Obtain the source. Access to a private repository requires an authorized GitHub account.
+1. Obtain the source from the public repository. Anyone can clone it without a GitHub account or invitation.
 
    ```powershell
    git clone https://github.com/onecarat-labs/onecarat-agent-office-cx.git C:\work\onecarat-agent-office-cx

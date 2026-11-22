@@ -20,14 +20,14 @@ Codexの活動に合わせて棒人間が動く、Windows用の小窓アプリ�
 
 **このリポジトリはソースコードです。GitHubから取得しただけでは起動用EXEはありません。** ビルドして、普段使うWindowsユーザー専用の場所へ配置します。すでに配置済みなら、この節を繰り返す必要はありません。
 
-1. ソースを取得します。Privateの場合はアクセス権のあるGitHubアカウントが必要です。
+1. 公開リポジトリからソースを取得します。GitHubアカウントや招待は不要で、誰でもcloneできます。
 
    ```powershell
    git clone https://github.com/onecarat-labs/onecarat-agent-office-cx.git C:\work\onecarat-agent-office-cx
    ```
 
    すでにソースがある場合は、再度cloneする必要はありません。
-2. [セットアップ手順](docs/SETUP.ja.md)に沿ってビルド・確認・手動インストールを行います。
+2. セットアップ手順（[日本語](docs/SETUP.ja.md) / [English](docs/SETUP.en.md)）に沿ってビルド・確認・手動インストールを行います。
 3. 下の「普段の起動方法」で、見たいセッションの小窓を開きます。
 
 Claude Code版のプラグイン導入コマンドはCXには使えません。CXには、現在、自動インストール・自動更新の機能はありません。
